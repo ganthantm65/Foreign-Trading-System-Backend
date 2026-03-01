@@ -1,4 +1,4 @@
-package com.example.Foreign.Trading.System.Model;
+package com.example.Foreign.Trading.System.Model.DTO;
 
 import lombok.Data;
 
@@ -12,8 +12,9 @@ public class UserDTO {
     private String bankName;
     private String swiftCode;
     private String userType;
+    private String accNo;
 
-    public UserDTO(String userName, String email, String password, String companyName, String country, String bankName, String swiftCode,String userType) {
+    public UserDTO(String userName, String email, String password, String companyName, String country, String bankName, String swiftCode,String userType,String accNo) {
         this.userName = userName;
         this.email = email;
         this.password = password;
@@ -22,5 +23,6 @@ public class UserDTO {
         this.bankName = bankName;
         this.swiftCode = swiftCode;
         this.userType= userType;
+        this.accNo=accNo;
     }
 }

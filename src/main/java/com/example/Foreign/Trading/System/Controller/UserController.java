@@ -1,9 +1,11 @@
 package com.example.Foreign.Trading.System.Controller;
 
-import com.example.Foreign.Trading.System.Exceptions.BankNotFoundException;
-import com.example.Foreign.Trading.System.Exceptions.OTPExpiredException;
-import com.example.Foreign.Trading.System.Exceptions.OTPMismatchException;
-import com.example.Foreign.Trading.System.Model.UserDTO;
+import com.example.Foreign.Trading.System.Exceptions.*;
+import com.example.Foreign.Trading.System.Model.Banker;
+import com.example.Foreign.Trading.System.Model.DTO.LoginDTO;
+import com.example.Foreign.Trading.System.Model.DTO.UserDTO;
+import com.example.Foreign.Trading.System.Model.Exporter;
+import com.example.Foreign.Trading.System.Model.Importer;
 import com.example.Foreign.Trading.System.Model.Users;
 import com.example.Foreign.Trading.System.Service.UserService;
 import com.example.Foreign.Trading.System.Service.VerifyOtpService;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -28,7 +31,8 @@ public class UserController {
         HashMap<String,String> map=new HashMap<>();
         try{
             verifyOtpService.addVerifyOtp(emailMap.get("email"));
-            return ResponseEntity.status(200).body(map.put("message","OTP sent to your email"));
+            map.put("message","OTP sent to your email");
+            return ResponseEntity.status(200).body(map);
         }  catch (Exception e) {
             map.put("message",e.getMessage());
             return ResponseEntity.status(404).body(map);
@@ -61,7 +65,41 @@ public class UserController {
             return ResponseEntity.status(201).body(users);
         } catch (BankNotFoundException e) {
             HashMap<String,String> response=new HashMap<>();
-            return ResponseEntity.status(404).body(response.put("message","Invalid Bank is specified"));
+            response.put("message","Invalid Bank is specified");
+            return ResponseEntity.status(404).body(response);
+        } catch (NoAccountFoundException e){
+            HashMap<String,String> response=new HashMap<>();
+            response.put("message",e.getMessage());
+            return ResponseEntity.status(404).body(response);
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginDTO loginDTO){
+        try{
+            if(loginDTO.getRole().equals("IMPORTER")){
+                Importer importer=userService.loginImporter(loginDTO.getEmail(),loginDTO.getPassword());
+                importer.setPassword(null);
+                return ResponseEntity.status(200).body(importer);
+            }else if(loginDTO.getRole().equals("EXPORTER")){
+                Exporter exporter=userService.loginExporter(loginDTO.getEmail(),loginDTO.getPassword());
+                exporter.setPassword(null);
+                return  ResponseEntity.status(200).body(exporter);
+            } else if (loginDTO.getRole().equals("BANKER")) {
+                Banker banker=userService.loginBanker(loginDTO.getEmail(), loginDTO.getPassword());
+                banker.setPassword(null);
+                return ResponseEntity.status(200).body(banker);
+            }
+            return ResponseEntity.status(404).body(null);
+        }catch (UnauthorizedUserException e){
+            Map<String,String> response=new HashMap<>();
+            response.put("message","unauthorized user");
+            return ResponseEntity.status(404).body(response);
+        } catch (InvalidUserException e) {
+            Map<String,String> response=new HashMap<>();
+            response.put("message","invalid password");
+            return ResponseEntity.status(404).body(response);
+        }
+
     }
 }

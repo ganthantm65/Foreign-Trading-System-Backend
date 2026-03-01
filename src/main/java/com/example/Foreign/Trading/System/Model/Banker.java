@@ -4,15 +4,15 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@DiscriminatorValue("EXPORTER")
-public class Exporter extends Users {
-    private String companyName;
+@DiscriminatorValue("BANKER")
+public class Banker extends Users {
     private String country;
-    private String accNo;
 
     @ManyToOne
     @JoinColumn(name= "bank_id")
