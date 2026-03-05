@@ -27,7 +27,7 @@ public class UserService {
             throw new BankNotFoundException("Bank Not Found");
         }
 
-        if (!bankService.findAccountByAccountId(userDTO.getAccNo())) {
+        if (bankService.findAccountByAccountId(userDTO.getAccNo())!=null) {
             throw new NoAccountFoundException("Account not found in the bank");
         }
 

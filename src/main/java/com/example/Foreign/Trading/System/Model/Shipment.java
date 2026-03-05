@@ -1,5 +1,6 @@
 package com.example.Foreign.Trading.System.Model;
 
+import com.example.Foreign.Trading.System.Repository.TradeRepository;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,18 +10,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+public class Shipment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int productId;
-
-    private String productName;
-
-    private String currency;
-
-    private Double unitPrice;
+    private int shipment_id;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
-    private Exporter exporter;
+    @JoinColumn(name = "trade_id")
+    private Trade trade;
+
+    private String deliveryDate;
 }

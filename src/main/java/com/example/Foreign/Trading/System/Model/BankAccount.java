@@ -17,5 +17,6 @@ public class BankAccount {
     @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
-    private String balance;
+    private String currencyCode;
+    private double balance;
 }

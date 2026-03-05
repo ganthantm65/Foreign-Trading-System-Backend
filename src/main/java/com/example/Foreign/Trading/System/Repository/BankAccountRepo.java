@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BankAccountRepo extends JpaRepository<BankAccount,Integer> {
 
-    boolean existsByAccNo(String accNo);
+    BankAccount findByAccNo(String accNo);
 
 }

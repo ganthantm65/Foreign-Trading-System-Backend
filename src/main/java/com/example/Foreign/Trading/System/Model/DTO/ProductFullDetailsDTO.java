@@ -1,7 +1,10 @@
 package com.example.Foreign.Trading.System.Model.DTO;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 
+@Data
 public class ProductFullDetailsDTO {
 
     private Integer productId;
