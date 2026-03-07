@@ -93,8 +93,9 @@ public class ExporterService {
     }
 
     public List<TradeFullDetailsDTO> getRequestedDTO(int user_id){
-        return tradeRepository.findTradeDetailsByStatusAndId(Trade.Status.PENDING,user_id);
+        return tradeRepository.findAllTradesByExporterId(user_id);
     }
+
 
     public void acceptTrade(int trade_id, Trade.Status status){
         tradeRepository.updateTradeStatus(trade_id,status);

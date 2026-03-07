@@ -31,10 +31,13 @@ public class ExporterController {
             return ResponseEntity.status(200).body(response);
         }
         catch (ExporterNotFoundException e){
+            System.out.println(e);
             response.put("message",e.getMessage());
             return ResponseEntity.status(404).body(response);
         }
     }
+
+
 
     @GetMapping("/product/get")
     public List<ProductFullDetailsDTO> getProductDetails(){
@@ -42,7 +45,7 @@ public class ExporterController {
     }
 
     @GetMapping("/trade/get")
-    public List<TradeFullDetailsDTO> getPendingTrades(@RequestParam int user_id){
+    public List<TradeFullDetailsDTO> getAllTradesForExporter(@RequestParam int user_id){
         return exporterService.getRequestedDTO(user_id);
     }
 

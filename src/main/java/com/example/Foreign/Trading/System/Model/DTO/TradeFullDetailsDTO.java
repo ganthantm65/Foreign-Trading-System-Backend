@@ -19,4 +19,8 @@ public class TradeFullDetailsDTO {
     private String importerName;
 
     private String bankName;
+
+    // NEW: account numbers
+    private String importerAccNo;
+    private String exporterAccNo;
 }

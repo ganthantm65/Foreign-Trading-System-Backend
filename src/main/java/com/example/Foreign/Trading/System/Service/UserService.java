@@ -1,14 +1,14 @@
 package com.example.Foreign.Trading.System.Service;
 
-import com.example.Foreign.Trading.System.Exceptions.BankNotFoundException;
-import com.example.Foreign.Trading.System.Exceptions.InvalidUserException;
-import com.example.Foreign.Trading.System.Exceptions.NoAccountFoundException;
-import com.example.Foreign.Trading.System.Exceptions.UnauthorizedUserException;
+import com.example.Foreign.Trading.System.Exceptions.*;
 import com.example.Foreign.Trading.System.Model.*;
 import com.example.Foreign.Trading.System.Model.DTO.UserDTO;
 import com.example.Foreign.Trading.System.Repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 @Service
 public class UserService {
 
@@ -18,102 +18,98 @@ public class UserService {
     @Autowired
     private BankService bankService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    // ---------------- REGISTER ----------------
+
     public Users registerUser(UserDTO userDTO)
             throws BankNotFoundException, NoAccountFoundException {
 
         Bank bank = bankService.findBankBySwiftCode(userDTO.getSwiftCode());
 
-        if (bank == null) {
-            throw new BankNotFoundException("Bank Not Found");
+        if(bank == null){
+            throw new BankNotFoundException("Bank not found");
         }
 
-        if (bankService.findAccountByAccountId(userDTO.getAccNo())!=null) {
-            throw new NoAccountFoundException("Account not found in the bank");
+        if(bankService.findAccountByAccountId(userDTO.getAccNo()) == null){
+            throw new NoAccountFoundException("Account not found in bank");
         }
 
         Users user;
 
-        if ("IMPORTER".equalsIgnoreCase(userDTO.getUserType())) {
+        if("IMPORTER".equalsIgnoreCase(userDTO.getUserType())){
 
             Importer importer = new Importer();
+
             importer.setCompanyName(userDTO.getCompanyName());
             importer.setCountry(userDTO.getCountry());
-            importer.setBank(bank);
             importer.setAccNo(userDTO.getAccNo());
+            importer.setBank(bank);
+
             user = importer;
 
-        } else if ("EXPORTER".equalsIgnoreCase(userDTO.getUserType())) {
+        }
+        else if("EXPORTER".equalsIgnoreCase(userDTO.getUserType())){
 
             Exporter exporter = new Exporter();
+
             exporter.setCompanyName(userDTO.getCompanyName());
             exporter.setCountry(userDTO.getCountry());
-            exporter.setBank(bank);
             exporter.setAccNo(userDTO.getAccNo());
+            exporter.setBank(bank);
+
             user = exporter;
 
-        } else if ("BANKER".equalsIgnoreCase(userDTO.getUserType())) {
+        }
+        else if("BANKER".equalsIgnoreCase(userDTO.getUserType())){
 
             Banker banker = new Banker();
+
             banker.setCountry(userDTO.getCountry());
             banker.setBank(bank);
+
             user = banker;
 
-        } else {
-            throw new IllegalArgumentException("Invalid User Type");
+        }
+        else{
+            throw new IllegalArgumentException("Invalid user type");
         }
 
         user.setUserName(userDTO.getUserName());
         user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
+
+        // encrypt password
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
         return userRepository.save(user);
     }
 
-    public Importer loginImporter(String email, String password)
+    // ---------------- LOGIN ----------------
+
+    public Users loginUser(String email, String password, String role)
             throws InvalidUserException, UnauthorizedUserException {
 
-        Importer importer = userRepository.findImporterByEmail(email);
+        Users user = null;
 
-        if (importer == null) {
-            throw new InvalidUserException("Importer not found");
+        if("IMPORTER".equalsIgnoreCase(role)){
+            user = userRepository.findImporterByEmail(email);
+        }
+        else if("EXPORTER".equalsIgnoreCase(role)){
+            user = userRepository.findExporterByEmail(email);
+        }
+        else if("BANKER".equalsIgnoreCase(role)){
+            user = userRepository.findBankerByEmail(email);
         }
 
-        if (!importer.getPassword().equals(password)) {
-            throw new UnauthorizedUserException("Invalid Password");
+        if(user == null){
+            throw new InvalidUserException("User not found");
         }
 
-        return importer;
-    }
-
-    public Exporter loginExporter(String email, String password)
-            throws InvalidUserException, UnauthorizedUserException {
-
-        Exporter exporter = userRepository.findExporterByEmail(email);
-
-        if (exporter == null) {
-            throw new InvalidUserException("Exporter not found");
+        if(!passwordEncoder.matches(password,user.getPassword())){
+            throw new UnauthorizedUserException("Invalid password");
         }
 
-        if (!exporter.getPassword().equals(password)) {
-            throw new UnauthorizedUserException("Invalid Password");
-        }
-
-        return exporter;
-    }
-
-    public Banker loginBanker(String email, String password)
-            throws InvalidUserException, UnauthorizedUserException {
-
-        Banker banker = userRepository.findBankerByEmail(email);
-
-        if (banker == null) {
-            throw new InvalidUserException("Banker not found");
-        }
-
-        if (!banker.getPassword().equals(password)) {
-            throw new UnauthorizedUserException("Invalid Password");
-        }
-
-        return banker;
+        return user;
     }
 }

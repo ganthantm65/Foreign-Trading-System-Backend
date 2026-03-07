@@ -1,15 +1,16 @@
 package com.example.Foreign.Trading.System.Model.DTO;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-
 @Data
+@NoArgsConstructor // Good practice to have for other mapping tools
 public class ProductFullDetailsDTO {
 
     private Integer productId;
     private String currency;
-    private double unitPrice;
+    private Double unitPrice; // Changed from double to Double
 
     private String exporterName;
     private String companyName;
@@ -18,11 +19,10 @@ public class ProductFullDetailsDTO {
     private String bankName;
     private String swiftCode;
 
-    // ✅ Constructor MUST match JPQL exactly (order + type)
     public ProductFullDetailsDTO(
             Integer productId,
             String currency,
-            double unitPrice,
+            Double unitPrice, // Changed to Double
             String exporterName,
             String companyName,
             String country,

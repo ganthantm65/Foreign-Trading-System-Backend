@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<Users,Integer> {
-
+    Users findByEmail(String email);
     // Importer
     @Query("SELECT u FROM Users u WHERE u.email = :email AND TYPE(u) = Importer")
     Importer findImporterByEmail(@Param("email") String email);

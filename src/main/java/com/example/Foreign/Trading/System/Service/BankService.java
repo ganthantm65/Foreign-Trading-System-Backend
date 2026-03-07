@@ -4,6 +4,7 @@ import com.example.Foreign.Trading.System.Exceptions.BalanceDeclinedException;
 import com.example.Foreign.Trading.System.Model.Bank;
 import com.example.Foreign.Trading.System.Model.BankAccount;
 import com.example.Foreign.Trading.System.Model.DTO.ForexResponse;
+import com.example.Foreign.Trading.System.Model.DTO.TradeFullDetailsDTO;
 import com.example.Foreign.Trading.System.Model.Trade;
 import com.example.Foreign.Trading.System.Repository.BankAccountRepo;
 import com.example.Foreign.Trading.System.Repository.BankRepo;
@@ -15,6 +16,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 @Service
 public class BankService {
@@ -85,6 +87,9 @@ public class BankService {
         }
 
         return response.getRates().get(exporterCurrency);
+    }
+    public List<TradeFullDetailsDTO> getAcceptedDTO(int user_id){
+        return tradeRepository.findAcceptedTradesForBank(Trade.Status.ACCEPTED,user_id);
     }
 
     public Bank findBankBySwiftCode(String swiftCode) {

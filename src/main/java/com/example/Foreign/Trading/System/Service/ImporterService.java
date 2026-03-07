@@ -44,6 +44,6 @@ public class ImporterService {
     }
 
     public List<TradeFullDetailsDTO> getCompleteTradeRequests(int user_id){
-        return tradeRepository.findTradeDetailsById(user_id);
+        return tradeRepository.findTradesByImporterId(user_id);
     }
 }
