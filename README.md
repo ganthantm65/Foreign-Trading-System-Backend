@@ -1,151 +1,449 @@
-# Foreign Trading System Backend 🌍
+# 🌍 Foreign Trading System
 
-This repository contains the backend implementation for a Foreign Trading System, developed in Java. It provides the necessary services and APIs to manage foreign trading operations.
+A **Spring Boot based Foreign Trading Management System** that simulates international trade between **Importers, Exporters, and Banks**.
 
-## 🛡️ Badges
+The system manages:
 
-[![Build Status](https://img.shields.io/travis/ganthantm65/Foreign-Trading-System-Backend.svg)](https://travis-ci.org/ganthantm65/Foreign-Trading-System-Backend)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Java Version](https://img.shields.io/badge/Java-17-blue.svg)](https://www.oracle.com/java/technologies/javase-downloads.html)
-
-## ✨ Features
-
-*   **User Management:** Secure authentication and authorization for different user roles (e.g., Importer, Exporter, Banker).
-*   **Bank Operations:** Functionality to manage bank accounts, process fund transfers, and handle foreign exchange transactions.
-*   **Trade Processing:** Endpoints to facilitate the core operations of a foreign trading system.
-*   **Security:** Implements JWT-based security for API access.
-*   **Exception Handling:** Comprehensive exception handling for various scenarios like invalid users, insufficient funds, and bank not found errors.
-
-## 🚀 Installation
-
-To set up the project locally, follow these steps:
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/ganthantm65/Foreign-Trading-System-Backend.git
-    ```
-
-2.  **Navigate to the project directory:**
-    ```bash
-    cd Foreign-Trading-System-Backend
-    ```
-
-3.  **Build the project using Maven:**
-    ```bash
-    ./mvnw clean install
-    ```
-
-4.  **Configure Environment Variables:**
-    Create a `.env` file in the root of the project and populate it with the necessary database credentials and JWT secrets. An example structure:
-    ```env
-    SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/tradingdb
-    SPRING_DATASOURCE_USERNAME=dbuser
-    SPRING_DATASOURCE_PASSWORD=dbpassword
-    JWT_SECRET=your_super_secret_key
-    JWT_EXPIRATION_MS=86400000
-    ```
-    *Note: Ensure you have a PostgreSQL database running and a database named `tradingdb` created with the specified user and password.*
-
-5.  **Run the application:**
-    ```bash
-    ./mvnw spring-boot:run
-    ```
-    The application will start on `http://localhost:8080` by default.
-
-## 💡 Usage
-
-This section provides examples of common API endpoints. Ensure the application is running and you have obtained a JWT token for authenticated requests.
-
-### User Authentication 🔑
-
-**Login Endpoint:**
-```http
-POST /api/auth/login
-```
-**Request Body (JSON):**
-```json
-{
-  "username": "importer@example.com",
-  "password": "password123"
-}
-```
-**Response Body (JSON):**
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiJ9..."
-}
-```
-
-### Bank Operations 🏦
-
-**Get Bank Account Balance:**
-```http
-GET /api/bank/balance/{accountNumber}
-```
-**Headers:**
-```
-Authorization: Bearer <your_jwt_token>
-```
-
-**Transfer Funds:**
-```http
-POST /api/bank/transfer
-```
-**Headers:**
-```
-Authorization: Bearer <your_jwt_token>
-```
-**Request Body (JSON):**
-```json
-{
-  "fromAccountNumber": "1234567890",
-  "toAccountNumber": "0987654321",
-  "amount": 1000.50,
-  "currency": "USD"
-}
-```
-
-### Exporter Operations 📦
-
-**Register New Exporter:**
-```http
-POST /api/exporter/register
-```
-**Headers:**
-```
-Authorization: Bearer <your_jwt_token>
-```
-**Request Body (JSON):**
-```json
-{
-  "name": "Exporter Corp",
-  "contactPerson": "John Doe",
-  "email": "exporter@example.com",
-  "address": "123 Export St"
-}
-```
-
-## 🤝 Contributing
-
-We welcome contributions to improve the Foreign Trading System Backend. Please follow these guidelines:
-
-1.  **Fork the repository.**
-2.  **Create a new branch** for your feature or bug fix (`git checkout -b feature/your-feature-name`).
-3.  **Make your changes** and ensure they are well-tested.
-4.  **Commit your changes** with clear and concise commit messages.
-5.  **Push to the branch** (`git push origin feature/your-feature-name`).
-6.  **Open a Pull Request** with a detailed description of your changes.
-
-Please ensure your code adheres to the existing coding style and conventions.
-
-## 📜 License
-
-This project is not currently under any specified license.
+* Product trading
+* Shipment tracking
+* Foreign currency transactions
+* Bank fund verification
+* Email OTP verification
+* Secure authentication using **JWT**
+* Exception handling for secure operations
 
 ---
 
-<p align="center">
-  <a href="https://readmeforge.app?utm_source=badge">
-    <img src="https://readmeforge.app/badge.svg" alt="Made with ReadmeForge" height="20">
-  </a>
-</p>
+# 📌 Project Overview
+
+The **Foreign Trading System** simulates real-world international trade operations where three entities interact:
+
+### 👤 Importer
+
+Requests products from exporters and receives shipments.
+
+### 🏭 Exporter
+
+Provides products and fulfills trade requests.
+
+### 🏦 Bank
+
+Verifies account balances and performs fund transfers between importer and exporter accounts.
+
+---
+
+# 🏗 System Architecture
+
+```
+Client (Frontend / Postman)
+        │
+        ▼
+REST Controllers
+        │
+        ▼
+Service Layer
+(Business Logic)
+        │
+        ▼
+Repository Layer
+(Spring Data JPA)
+        │
+        ▼
+PostgreSQL Database
+```
+
+---
+
+# 👥 System Actors
+
+## 1️⃣ Importer
+
+Features:
+
+* Create trade request
+* View trade status
+* Track shipments
+
+---
+
+## 2️⃣ Exporter
+
+Features:
+
+* Add products
+* View trade requests
+* Accept trades
+* Ship products
+* Mark delivery
+
+---
+
+## 3️⃣ Bank
+
+Features:
+
+* Verify importer balance
+* Transfer funds
+* Handle international transactions
+
+---
+
+# 🔄 Trade Lifecycle
+
+```
+Importer creates trade request
+        │
+        ▼
+Trade Status = PENDING
+        │
+        ▼
+Exporter accepts trade
+        │
+        ▼
+Trade Status = ACCEPTED
+        │
+        ▼
+Bank verifies and transfers funds
+        │
+        ▼
+Trade Status = VERIFIED
+        │
+        ▼
+Exporter ships product
+        │
+        ▼
+Trade Status = SHIPPED
+        │
+        ▼
+Exporter delivers product
+        │
+        ▼
+Trade Status = DELIVERED
+```
+
+---
+
+# 🗂 Project Structure
+
+```
+Foreign-Trading-System
+│
+├── Controller
+│     ├── ImporterController
+│     ├── ExporterController
+│     └── BankController
+│
+├── Service
+│     ├── ImporterService
+│     ├── ExporterService
+│     ├── BankService
+│     ├── EmailService
+│     └── VerifyOtpService
+│
+├── Repository
+│     ├── UserRepository
+│     ├── ProductRepo
+│     ├── TradeRepository
+│     ├── ShipmentRepo
+│     ├── BankAccountRepo
+│     └── VerifyOtpRepo
+│
+├── Model
+│     ├── Users
+│     ├── Importer
+│     ├── Exporter
+│     ├── Banker
+│     ├── Product
+│     ├── Trade
+│     ├── Shipment
+│     ├── Bank
+│     ├── BankAccount
+│     └── VerificationOTP
+│
+├── DTO
+│     ├── ProductDTO
+│     ├── ProductFullDetailsDTO
+│     ├── TradeRequestDTO
+│     ├── TradeFullDetailsDTO
+│     ├── FundTransferRequest
+│     └── ForexResponse
+│
+├── Exceptions
+│     ├── BalanceDeclinedException
+│     ├── BankNotFoundException
+│     ├── ExporterNotFoundException
+│     ├── InvalidUserException
+│     ├── NoAccountFoundException
+│     ├── OTPExpiredException
+│     ├── OTPMismatchException
+│     └── UnauthorizedUserException
+│
+└── Config
+      ├── JwtUtil
+      ├── JwtFilter
+      └── SecurityConfig
+```
+
+---
+
+# ⚠ Exception Handling
+
+The system includes **custom exception classes** to ensure robust error handling.
+
+### Implemented Exceptions
+
+* `BalanceDeclinedException`
+  Thrown when importer balance is insufficient.
+
+* `BankNotFoundException`
+  Thrown when a bank cannot be found.
+
+* `ExporterNotFoundException`
+  Thrown when exporter details are invalid.
+
+* `InvalidUserException`
+  Thrown for invalid user operations.
+
+* `NoAccountFoundException`
+  Thrown when bank account does not exist.
+
+* `OTPExpiredException`
+  Thrown when OTP has expired.
+
+* `OTPMismatchException`
+  Thrown when OTP entered is incorrect.
+
+* `UnauthorizedUserException`
+  Thrown when user authentication fails.
+
+---
+
+# 🔐 Security Features
+
+The system uses **Spring Security with JWT authentication**.
+
+Features:
+
+* Password encryption using **BCrypt**
+* Stateless authentication using **JWT**
+* Secure login system
+* Role-based API protection
+
+Example request header:
+
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+---
+
+# 📧 Email OTP Verification
+
+Email verification is implemented using **OTP authentication**.
+
+Features:
+
+* 4-digit OTP generation
+* OTP validity: **10 minutes**
+* Email delivery using **JavaMailSender**
+* HTML email template
+
+---
+
+# 💱 Forex Support
+
+The system supports **currency-based international trading**.
+
+Features:
+
+* Product currency specification
+* Bank account currency codes
+* Forex response mapping using external APIs
+
+---
+
+# 📦 Shipment System
+
+After fund verification:
+
+1. Exporter ships product.
+2. Shipment record is created.
+3. Delivery date is automatically assigned.
+
+---
+
+# 🗄 Database
+
+Database used:
+
+**PostgreSQL (PSQL)**
+
+Main tables:
+
+* users
+* importer
+* exporter
+* banker
+* product
+* trade
+* shipment
+* bank
+* bank_account
+* verification_otp
+
+---
+
+# ⚙ Technologies Used
+
+### Backend
+
+* Java 17
+* Spring Boot
+* Spring Security
+* Spring Data JPA
+* Hibernate
+
+### Database
+
+* PostgreSQL
+
+### Other Tools
+
+* JWT Authentication
+* JavaMailSender
+* Lombok
+* Maven
+
+---
+
+# 🚀 API Endpoints
+
+## Importer APIs
+
+```
+POST   /api/create/trade
+GET    /api/get/trade
+```
+
+---
+
+## Exporter APIs
+
+```
+POST   /api/exporter/product/add
+GET    /api/exporter/product/get
+GET    /api/exporter/trade/get
+PUT    /api/exporter/accept/{trade_id}
+PUT    /api/exporter/ship/{trade_id}
+PUT    /api/exporter/deliver/{trade_id}
+```
+
+---
+
+## Bank APIs
+
+```
+POST   /api/bank/transfer
+GET    /api/bank/trade/accepted
+```
+
+---
+
+# 🧪 Sample Trade Request
+
+```
+POST /api/create/trade
+```
+
+Request Body
+
+```json
+{
+  "productId": 1,
+  "quantity": 10,
+  "importerId": 2
+}
+```
+
+---
+
+# 🏦 Sample Fund Transfer
+
+```
+POST /api/bank/transfer
+```
+
+```json
+{
+  "importerAccNo": "IMP1001",
+  "exporterAccNo": "EXP2001",
+  "fund": 5000,
+  "tradeId": 10
+}
+```
+
+---
+
+# 🛠 Setup Instructions
+
+### 1 Clone Repository
+
+```
+git clone https://github.com/yourusername/foreign-trading-system.git
+```
+
+---
+
+### 2 Configure PostgreSQL
+
+Update **application.properties**
+
+```
+spring.datasource.url=jdbc:postgresql://localhost:5432/foreign_trading
+spring.datasource.username=postgres
+spring.datasource.password=yourpassword
+spring.jpa.hibernate.ddl-auto=update
+```
+
+---
+
+### 3 Run Application
+
+```
+mvn spring-boot:run
+```
+
+---
+
+### 4 Test APIs
+
+Use:
+
+* Postman
+* Swagger
+* Frontend Application
+
+---
+
+# 📈 Future Improvements
+
+Possible enhancements:
+
+* Real-time Forex API integration
+* Microservice architecture
+* Docker deployment
+* Frontend using React or Angular
+* Payment gateway integration
+* Shipment tracking APIs
+
+---
+
+# 👨‍💻 Author
+
+Developed as a **Spring Boot backend project** simulating international trade operations between importers, exporters, and banks.
+
+---
+
+# 📄 License
+
+This project is for **educational purposes**.
